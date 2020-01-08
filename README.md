@@ -1,5 +1,7 @@
 # Homebrew Tap
 
+ [ ![Download](https://api.bintray.com/packages/sanghan/bottles-packages/homebrew-packages/images/download.svg?version=4.2.2) ](https://bintray.com/sanghan/bottles-packages/homebrew-packages/4.2.2/link)
+
 Personal homebrew taps
 
 # Installation
