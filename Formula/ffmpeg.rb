@@ -8,6 +8,11 @@ class Ffmpeg < Formula
     sha256 "cb754255ab0ee2ea5f66f8850e1bd6ad5cac1cd855d0a2f4990fb8c668b0d29c"
   end
 
+  bottle do
+    root_url "https://dl.bintray.com/sanghan/bottles-packages"
+    sha256 "934d7000c811e10f4caec537136d629c973025e50637a1154bca78bc97a4abca" => :mojave
+  end
+
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "nasm" => :build
