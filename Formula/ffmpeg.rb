@@ -1,36 +1,20 @@
 class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-4.2.2.tar.xz"
-  sha256 "cb754255ab0ee2ea5f66f8850e1bd6ad5cac1cd855d0a2f4990fb8c668b0d29c"
   head "https://github.com/FFmpeg/FFmpeg.git"
 
-  # This formula is for people that will compile with their chosen options
-  bottle :unneeded
+  stable do
+    url "https://ffmpeg.org/releases/ffmpeg-4.2.2.tar.xz"
+    sha256 "cb754255ab0ee2ea5f66f8850e1bd6ad5cac1cd855d0a2f4990fb8c668b0d29c"
+  end
 
-  option "with-chromaprint", "Enable the Chromaprint audio fingerprinting library"
-  option "with-decklink", "Enable DeckLink support"
-  option "with-fdk-aac", "Enable the Fraunhofer FDK AAC library"
-  option "with-librsvg", "Enable SVG files as inputs via librsvg"
-  option "with-libsoxr", "Enable the soxr resample library"
-  option "with-libssh", "Enable SFTP protocol via libssh"
-  option "with-tesseract", "Enable the tesseract OCR engine"
-  option "with-libvidstab", "Enable vid.stab support for video stabilization"
-  option "with-opencore-amr", "Enable Opencore AMR NR/WB audio format"
-  option "with-openh264", "Enable OpenH264 library"
-  option "with-openjpeg", "Enable JPEG 2000 image format"
-  option "with-openssl", "Enable SSL support"
-  option "with-rubberband", "Enable rubberband library"
-  option "with-webp", "Enable using libwebp to encode WEBP images"
-  option "with-zeromq", "Enable using libzeromq to receive cmds sent through a libzeromq client"
-  option "with-zimg", "Enable z.lib zimg library"
-  option "with-srt", "Enable SRT library"
-  option "with-libvmaf", "Enable libvmaf scoring library"
-  option "with-libxml2", "Enable libxml2 library"
-
+  depends_on "automake" => :build
+  depends_on "libtool" => :build
   depends_on "nasm" => :build
   depends_on "pkg-config" => :build
+  depends_on "shtool" => :build
   depends_on "texi2html" => :build
+  depends_on "yasm" => :build
 
   depends_on "aom"
   depends_on "fontconfig"
@@ -48,10 +32,17 @@ class Ffmpeg < Formula
   depends_on "x265"
   depends_on "xz"
 
-  depends_on "https://github.com/amiaopensource/homebrew-amiaos/blob/master/decklinksdk.rb" => :optional
-  depends_on "chromaprint" => :optional
-  depends_on "fdk-aac" => :optional
+  depends_on "fdk-aac" => :recommended
+  depends_on "rtmpdump" => :recommended
+  depends_on "webp" => :recommended
+  depends_on "xvid" => :recommended
+
+  depends_on "amiaopensource/amiaos/decklinksdk" => :optional
+  depends_on "dav1d" => :optional
+  depends_on "rav1e" => :optional
+  # depends_on "chromaprint" => :optional
   depends_on "game-music-emu" => :optional
+  depends_on "kvazaar" => :optional
   depends_on "libbluray" => :optional
   depends_on "libbs2b" => :optional
   depends_on "libcaca" => :optional
@@ -67,17 +58,15 @@ class Ffmpeg < Formula
   depends_on "openh264" => :optional
   depends_on "openjpeg" => :optional
   depends_on "openssl" => :optional
-  depends_on "rtmpdump" => :optional
   depends_on "rubberband" => :optional
   depends_on "speex" => :optional
   depends_on "srt" => :optional
   depends_on "tesseract" => :optional
   depends_on "two-lame" => :optional
   depends_on "wavpack" => :optional
-  depends_on "webp" => :optional
-  depends_on "xvid" => :optional
   depends_on "zeromq" => :optional
   depends_on "zimg" => :optional
+
 
   def install
     # Work around Xcode 11 clang bug
@@ -86,10 +75,11 @@ class Ffmpeg < Formula
 
     args = %W[
       --prefix=#{prefix}
-      --enable-shared
-      --enable-pthreads
-      --enable-version3
+      --enable-hardcoded-tables
       --enable-nonfree
+      --enable-pthreads
+      --enable-shared
+      --enable-version3
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
@@ -107,30 +97,34 @@ class Ffmpeg < Formula
       --enable-libmp3lame
       --enable-libopus
       --enable-libsnappy
-      --enable-libtesseract
       --enable-libtheora
-      --enable-libvidstab
       --enable-libvorbis
       --enable-libvpx
       --enable-libx264
       --enable-libx265
       --enable-lzma
-      --enable-opencl
-      --enable-videotoolbox
       --disable-indev=jack
       --disable-libjack
     ]
 
-    args << "--enable-chromaprint" if build.with? "chromaprint"
+    if OS.mac?
+      args << "--enable-opencl"
+      args << "--enable-videotoolbox"
+    end
+
+    # args << "--enable-chromaprint" if build.with? "chromaprint"
     args << "--enable-decklink" if build.with? "decklink"
     args << "--enable-libbluray" if build.with? "libbluray"
     args << "--enable-libbs2b" if build.with? "libbs2b"
     args << "--enable-libcaca" if build.with? "libcaca"
+    args << "--enable-libdav1d" if build.with? "dav1d"
     args << "--enable-libfdk-aac" if build.with? "fdk-aac"
     args << "--enable-libgme" if build.with? "game-music-emu"
     args << "--enable-libgsm" if build.with? "libgsm"
+    args << "--enable-libkvazaar" if build.with? "kvazaar"
     args << "--enable-libmodplug" if build.with? "libmodplug"
     args << "--enable-libopenh264" if build.with? "openh264"
+    args << "--enable-librav1e" if build.with? "rav1e"
     args << "--enable-librsvg" if build.with? "librsvg"
     args << "--enable-librtmp" if build.with? "rtmpdump"
     args << "--enable-librubberband" if build.with? "rubberband"
@@ -167,9 +161,14 @@ class Ffmpeg < Formula
     # Build and install additional FFmpeg tools
     system "make", "alltools"
     bin.install Dir["tools/*"].select { |f| File.executable? f }
-
-    # Fix for Non-executables that were installed to bin/
     mv bin/"python", pkgshare/"python", :force => true
+
+    if build.with? "tesseract"
+      opoo <<~EOS
+        The default `tesseract` dependency includes limited language support.
+        To add all supported languages, install the `tesseract-lang` formula.
+      EOS
+    end
   end
 
   test do
