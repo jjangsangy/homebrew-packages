@@ -1,0 +1,19 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: homebrew-tap
+      uses: izumin5210/action-homebrew-tap@v1.0.0
+      with:
+        tap: jjangsangy/packages
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tap-token: ${{ secrets.TAP_GITHUB_TOKEN }}
+        release-branch: master
+        commit-message: bump
+        formula: Formula/ffmpeg.rb
