@@ -34,6 +34,7 @@ class Ffmpeg < Formula
   depends_on "opus"
   depends_on "sdl2"
   depends_on "snappy"
+  depends_on "theora"
   depends_on "x264"
   depends_on "x265"
   depends_on "xz"
