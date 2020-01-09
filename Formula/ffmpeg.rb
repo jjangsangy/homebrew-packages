@@ -38,6 +38,12 @@ class Ffmpeg < Formula
   depends_on "x265"
   depends_on "xz"
 
+  unless OS.mac?
+    depends_on "zlib"
+    depends_on "bzip2"
+    depends_on "linuxbrew/xorg/libxv"
+  end
+
   depends_on "fdk-aac" => :recommended
   depends_on "rtmpdump" => :recommended
   depends_on "webp" => :recommended
