@@ -9,7 +9,7 @@ class Ffmpeg < Formula
     version "4.2.2"
   end
 
-  dev do
+  devel do
     url "https://github.com/FFmpeg/FFmpeg/archive/n4.3-dev.tar.gz"
     sha256 "253dd6a1922ed28533e402818f0eea5ed6b4fef22e9b7056c47fe0ad09fee3b4"
     version "4.3.0"
@@ -72,7 +72,7 @@ class Ffmpeg < Formula
   depends_on "opencore-amr" => :optional
   depends_on "openh264" => :optional
   depends_on "openjpeg" => :optional
-  depends_on "rtmpdump" => :optional
+  depends_on "rtmp" => :optional
   depends_on "rubberband" => :optional
   depends_on "speex" => :optional
   depends_on "srt" => :optional
@@ -94,6 +94,7 @@ class Ffmpeg < Formula
       --enable-hardcoded-tables
       --enable-nonfree
       --enable-pthreads
+      --disable-static
       --enable-shared
       --enable-version3
       --cc=#{ENV.cc}
@@ -142,7 +143,7 @@ class Ffmpeg < Formula
     args << "--enable-libmodplug" if build.with? "libmodplug"
     args << "--enable-libopenh264" if build.with? "openh264"
     args << "--enable-librsvg" if build.with? "librsvg"
-    args << "--enable-librtmp" if build.with? "rtmpdump"
+    args << "--enable-librtmp" if build.with? "rtmp"
     args << "--enable-librubberband" if build.with? "rubberband"
     args << "--enable-libsoxr" if build.with? "libsoxr"
     args << "--enable-libspeex" if build.with? "speex"
