@@ -2,6 +2,7 @@ class Chromaprint < Formula
   desc "Core component of the AcoustID project (Audio fingerprinting)"
   homepage "https://acoustid.org/chromaprint"
   head "https://github.com/acoustid/chromaprint.git"
+  version 1.4.3
 
   stable do
     url "https://github.com/acoustid/chromaprint/releases/download/v1.4.3/chromaprint-1.4.3.tar.gz"
