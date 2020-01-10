@@ -1,7 +1,8 @@
 class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  head "https://github.com/FFmpeg/FFmpeg.git"
+  head "https://git.ffmpeg.org/ffmpeg.git"
+  mirror "https://github.com/FFmpeg/FFmpeg.git"
 
   stable do
     url "https://ffmpeg.org/releases/ffmpeg-4.2.2.tar.xz"
@@ -33,7 +34,6 @@ class Ffmpeg < Formula
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "frei0r"
-  depends_on "gnutls"
   depends_on "lame"
   depends_on "libass"
   depends_on "libvorbis"
@@ -52,15 +52,20 @@ class Ffmpeg < Formula
     depends_on "linuxbrew/xorg/libxv"
   end
 
-  depends_on "jjangsangy/packages/chromaprint" => :optional
+  option "with-rtmp", "Install with support for rtmp"
+  option "with-x11", "Install with support for x-windows"
+
   depends_on "amiaopensource/amiaos/decklinksdk" => :optional
   depends_on "dav1d" => :optional
   depends_on "fdk-aac" => :optional
   depends_on "game-music-emu" => :optional
+  depends_on "gmp" => ["with-rtmp", :optional]
+  depends_on "jjangsangy/packages/chromaprint" => :optional
   depends_on "kvazaar" => :optional
   depends_on "libbluray" => :optional
   depends_on "libbs2b" => :optional
   depends_on "libcaca" => :optional
+  depends_on "libgcrypt" => ["with-rtmp", :optional]
   depends_on "libgsm" => :optional
   depends_on "libmodplug" => :optional
   depends_on "librsvg" => :optional
@@ -72,7 +77,8 @@ class Ffmpeg < Formula
   depends_on "opencore-amr" => :optional
   depends_on "openh264" => :optional
   depends_on "openjpeg" => :optional
-  depends_on "rtmp" => :optional
+  depends_on "openssl" => ["with-rtmp", :optional]
+  depends_on "rtmpdump" => ["with-rtmp", :optional]
   depends_on "rubberband" => :optional
   depends_on "speex" => :optional
   depends_on "srt" => :optional
@@ -83,6 +89,7 @@ class Ffmpeg < Formula
   depends_on "xvid" => :optional
   depends_on "zeromq" => :optional
   depends_on "zimg" => :optional
+  depends_on "homebrew/cask/xquartz" => ["with-x11", :optional]
 
   def install
     # Work around Xcode 11 clang bug
@@ -105,7 +112,6 @@ class Ffmpeg < Formula
       --enable-avresample
       --enable-ffplay
       --enable-frei0r
-      --enable-gnutls
       --enable-gpl
       --enable-libaom
       --enable-libass
@@ -159,6 +165,13 @@ class Ffmpeg < Formula
     args << "--enable-libxvid" if build.with? "xvid"
     args << "--enable-libzimg" if build.with? "zimg"
     args << "--enable-libzmq" if build.with? "zeromq"
+
+    if build.with? "rtmp"
+      args << "--enable-librtmp"
+      args << "--enable-openssl"
+      args << "--enable-gcrypt"
+      args << "--enable-gmp"
+    end
 
     if build.with? "openjpeg"
       args << "--enable-libopenjpeg"
