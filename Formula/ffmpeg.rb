@@ -10,8 +10,8 @@ class Ffmpeg < Formula
 
   bottle do
     root_url "https://dl.bintray.com/sanghan/bottles-packages"
-    rebuild 1
-    sha256 "934d7000c811e10f4caec537136d629c973025e50637a1154bca78bc97a4abca" => :mojave
+    rebuild 2
+    sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
   end
 
   depends_on "automake" => :build
