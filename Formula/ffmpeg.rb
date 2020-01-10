@@ -131,8 +131,12 @@ class Ffmpeg < Formula
     # https://bitbucket.org/multicoreware/x265/issues/514/wrong-code-generated-on-macos-1015
     ENV.append_to_cflags "-fno-stack-check" if DevelopmentTools.clang_build_version >= 1010
 
+    ENV.append("extra_libs", "-lpthread")
+    ENV.append("extra_libs", "-lm")
+
     args = %W[
       --prefix=#{prefix}
+      --extra-libs=#{ENV["extra_libs"]}
       --enable-hardcoded-tables
       --enable-nonfree
       --enable-gpl
