@@ -1,7 +1,7 @@
 class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video"
-  homepage "https://ffmpeg.org/"
   head "https://git.ffmpeg.org/ffmpeg.git"
+  homepage "https://ffmpeg.org/"
   mirror "https://github.com/FFmpeg/FFmpeg.git"
 
   stable do
@@ -14,6 +14,7 @@ class Ffmpeg < Formula
     url "https://github.com/FFmpeg/FFmpeg/archive/n4.3-dev.tar.gz"
     sha256 "253dd6a1922ed28533e402818f0eea5ed6b4fef22e9b7056c47fe0ad09fee3b4"
     version "4.3.0"
+
   end
 
   bottle do
@@ -41,7 +42,7 @@ class Ffmpeg < Formula
   option "with-libvidstab", "Enable vid.stab support for video stabilization"
   option "with-libvmaf", "Enable libvmaf scoring library"
   option "with-libxml2", "Enable XML parsing using the C library libxml2, needed for dash demuxing support"
-  option "with-opencore-amr", "Enable Opencore AMR NR/WB audio format"
+  option "with-opencore-amr", "Enable Opencore AMR format"
   option "with-openh264", "Enable H.264 encoding via OpenH264"
   option "with-openjpeg", "Enable JPEG 2000 de/encoding via OpenJPEG"
   option "with-rubberband", "Enable rubberband needed for rubberband filter"
@@ -121,6 +122,9 @@ class Ffmpeg < Formula
   depends_on "zeromq" => :optional
   depends_on "zimg" => :optional
 
+  if build.with? "tesseract"
+    depends_on "tesseract-lang" => :recommended
+  end
 
   def install
     # Work around Xcode 11 clang bug
@@ -166,8 +170,8 @@ class Ffmpeg < Formula
     end
 
     args << "--enable-chromaprint" if build.with? "chromaprint"
-    args << "--enable-decklink" if build.with? "decklink"
-    args << "--enable-gcrypt" if build.with? "gcrypt"
+    args << "--enable-decklink" if build.with? "decklinksdk"
+    args << "--enable-gcrypt" if build.with? "libgcrypt"
     args << "--enable-gmp" if build.with? "gmp"
     args << "--enable-gnutls" if !build.without? "gnutls"
     args << "--enable-libbluray" if build.with? "libbluray"
@@ -215,13 +219,6 @@ class Ffmpeg < Formula
     system "make", "alltools"
     bin.install Dir["tools/*"].select { |f| File.executable? f }
     mv bin/"python", pkgshare/"python", :force => true
-
-    if build.with? "tesseract"
-      opoo <<~EOS
-        The default `tesseract` dependency includes limited language support.
-        To add all supported languages, install the `tesseract-lang` formula.
-      EOS
-    end
   end
 
   test do
