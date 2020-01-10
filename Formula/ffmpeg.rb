@@ -45,14 +45,10 @@ class Ffmpeg < Formula
     depends_on "linuxbrew/xorg/libxv"
   end
 
-  depends_on "fdk-aac" => :recommended
-  depends_on "rtmpdump" => :recommended
-  depends_on "webp" => :recommended
-  depends_on "xvid" => :recommended
-
+  depends_on "jjangsangy/packages/chromaprint" => :optional
   depends_on "amiaopensource/amiaos/decklinksdk" => :optional
   depends_on "dav1d" => :optional
-  # depends_on "chromaprint" => :optional
+  depends_on "fdk-aac" => :optional
   depends_on "game-music-emu" => :optional
   depends_on "kvazaar" => :optional
   depends_on "libbluray" => :optional
@@ -69,15 +65,17 @@ class Ffmpeg < Formula
   depends_on "opencore-amr" => :optional
   depends_on "openh264" => :optional
   depends_on "openjpeg" => :optional
+  depends_on "rtmpdump" => :optional
   depends_on "rubberband" => :optional
   depends_on "speex" => :optional
   depends_on "srt" => :optional
   depends_on "tesseract" => :optional
   depends_on "two-lame" => :optional
   depends_on "wavpack" => :optional
+  depends_on "webp" => :optional
+  depends_on "xvid" => :optional
   depends_on "zeromq" => :optional
   depends_on "zimg" => :optional
-
 
   def install
     # Work around Xcode 11 clang bug
@@ -116,6 +114,7 @@ class Ffmpeg < Formula
       --enable-lzma
       --disable-indev=jack
       --disable-libjack
+      --disable-doc
     ]
 
     if OS.mac?
@@ -123,7 +122,7 @@ class Ffmpeg < Formula
       args << "--enable-videotoolbox"
     end
 
-    # args << "--enable-chromaprint" if build.with? "chromaprint"
+    args << "--enable-chromaprint" if build.with? "chromaprint"
     args << "--enable-decklink" if build.with? "decklink"
     args << "--enable-libbluray" if build.with? "libbluray"
     args << "--enable-libbs2b" if build.with? "libbs2b"
