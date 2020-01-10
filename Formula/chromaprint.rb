@@ -7,7 +7,6 @@ class Chromaprint < Formula
     version "v1.4.3"
     url "https://github.com/acoustid/chromaprint/releases/download/v1.4.3/chromaprint-1.4.3.tar.gz"
     sha256 "ea18608b76fb88e0203b7d3e1833fb125ce9bb61efe22c6e169a50c52c457f82"
-    revision 1
   end
 
   depends_on "cmake" => :build
