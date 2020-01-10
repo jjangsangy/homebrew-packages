@@ -22,11 +22,43 @@ class Ffmpeg < Formula
     sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
   end
 
+  option "with-chromaprint", "Enable the Chromaprint audio fingerprinting library"
+  option "with-dav1d", "Enable AV1 decoding via libdav1d"
+  option "with-decklinksdk", "Enable DeckLink support"
+  option "with-fdk-aac", "Enable the Fraunhofer FDK AAC library"
+  option "with-game-music-emu", "Enable Game Music Emu via libgme"
+  option "with-gmp", "Enable gmp, needed for rtmp(t)e support if openssl or librtmp is not used"
+  option "with-kvazaar", "Enable HEVC encoding via libkvazaar"
+  option "with-libbluray", "Enable BluRay reading using libbluray"
+  option "with-libbs2b", "Enable bs2b DSP library"
+  option "with-libcaca", "Enable textual display using libcaca"
+  option "with-libgcrypt", "Enable gcrypt, needed for rtmp(t)e support if openssl, librtmp or gmp is not used"
+  option "with-libgsm", "Enable GSM de/encoding via libgsm"
+  option "with-libmodplug", "Enable ModPlug via libmodplug"
+  option "with-librsvg", "Enable SVG files as inputs via librsvg"
+  option "with-libsoxr", "Enable the soxr resample library"
+  option "with-libssh", "Enable SFTP protocol via libssh"
+  option "with-libvidstab", "Enable vid.stab support for video stabilization"
+  option "with-libvmaf", "Enable libvmaf scoring library"
+  option "with-libxml2", "Enable XML parsing using the C library libxml2, needed for dash demuxing support"
+  option "with-opencore-amr", "Enable Opencore AMR NR/WB audio format"
+  option "with-openh264", "Enable H.264 encoding via OpenH264"
+  option "with-openjpeg", "Enable JPEG 2000 de/encoding via OpenJPEG"
+  option "with-rubberband", "Enable rubberband needed for rubberband filter"
+  option "with-speex", "Enable Speex de/encoding via libspeex"
+  option "with-srt", "Enable Haivision SRT protocol via libsrt"
+  option "with-tesseract", "Enable Tesseract, needed for ocr filter"
+  option "with-two-lame", "Enable MP2 encoding via libtwolame"
+  option "with-wavpack", "Enable wavpack encoding via libwavpack"
+  option "with-webp", "Enable using libwebp to encode WEBP images"
+  option "with-xvid", "Enable Xvid encoding via xvidcore native MPEG-4/Xvid encoder exists"
+  option "with-zeromq", "Enable using libzeromq to receive cmds sent through a libzeromq client"
+  option "with-zimg", "Enable z.lib, needed for zscale filter"
+
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "nasm" => :build
   depends_on "pkg-config" => :build
-  depends_on "shtool" => :build
   depends_on "texi2html" => :build
   depends_on "yasm" => :build
 
@@ -39,6 +71,7 @@ class Ffmpeg < Formula
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "opus"
+  depends_on "rtmpdump"
   depends_on "sdl2"
   depends_on "snappy"
   depends_on "theora"
@@ -52,20 +85,20 @@ class Ffmpeg < Formula
     depends_on "linuxbrew/xorg/libxv"
   end
 
-  option "with-rtmp", "Install with support for rtmp"
-  option "with-x11", "Install with support for x-windows"
+  depends_on "gnutls" => :recommended
 
   depends_on "amiaopensource/amiaos/decklinksdk" => :optional
+  depends_on "jjangsangy/packages/chromaprint" => :optional
+
   depends_on "dav1d" => :optional
   depends_on "fdk-aac" => :optional
   depends_on "game-music-emu" => :optional
-  depends_on "gmp" => ["with-rtmp", :optional]
-  depends_on "jjangsangy/packages/chromaprint" => :optional
+  depends_on "gmp" => :optional
   depends_on "kvazaar" => :optional
   depends_on "libbluray" => :optional
   depends_on "libbs2b" => :optional
   depends_on "libcaca" => :optional
-  depends_on "libgcrypt" => ["with-rtmp", :optional]
+  depends_on "libgcrypt" => :optional
   depends_on "libgsm" => :optional
   depends_on "libmodplug" => :optional
   depends_on "librsvg" => :optional
@@ -77,8 +110,6 @@ class Ffmpeg < Formula
   depends_on "opencore-amr" => :optional
   depends_on "openh264" => :optional
   depends_on "openjpeg" => :optional
-  depends_on "openssl" => ["with-rtmp", :optional]
-  depends_on "rtmpdump" => ["with-rtmp", :optional]
   depends_on "rubberband" => :optional
   depends_on "speex" => :optional
   depends_on "srt" => :optional
@@ -89,7 +120,7 @@ class Ffmpeg < Formula
   depends_on "xvid" => :optional
   depends_on "zeromq" => :optional
   depends_on "zimg" => :optional
-  depends_on "homebrew/cask/xquartz" => ["with-x11", :optional]
+
 
   def install
     # Work around Xcode 11 clang bug
@@ -100,6 +131,7 @@ class Ffmpeg < Formula
       --prefix=#{prefix}
       --enable-hardcoded-tables
       --enable-nonfree
+      --enable-gpl
       --enable-pthreads
       --disable-static
       --enable-shared
@@ -107,12 +139,9 @@ class Ffmpeg < Formula
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
-      --extra-cflags=-I#{HOMEBREW_PREFIX}/include
-      --extra-ldflags=-L#{HOMEBREW_PREFIX}/lib
       --enable-avresample
       --enable-ffplay
       --enable-frei0r
-      --enable-gpl
       --enable-libaom
       --enable-libass
       --enable-libfontconfig
@@ -138,6 +167,9 @@ class Ffmpeg < Formula
 
     args << "--enable-chromaprint" if build.with? "chromaprint"
     args << "--enable-decklink" if build.with? "decklink"
+    args << "--enable-gcrypt" if build.with? "gcrypt"
+    args << "--enable-gmp" if build.with? "gmp"
+    args << "--enable-gnutls" if !build.without? "gnutls"
     args << "--enable-libbluray" if build.with? "libbluray"
     args << "--enable-libbs2b" if build.with? "libbs2b"
     args << "--enable-libcaca" if build.with? "libcaca"
@@ -149,7 +181,6 @@ class Ffmpeg < Formula
     args << "--enable-libmodplug" if build.with? "libmodplug"
     args << "--enable-libopenh264" if build.with? "openh264"
     args << "--enable-librsvg" if build.with? "librsvg"
-    args << "--enable-librtmp" if build.with? "rtmp"
     args << "--enable-librubberband" if build.with? "rubberband"
     args << "--enable-libsoxr" if build.with? "libsoxr"
     args << "--enable-libspeex" if build.with? "speex"
@@ -165,13 +196,6 @@ class Ffmpeg < Formula
     args << "--enable-libxvid" if build.with? "xvid"
     args << "--enable-libzimg" if build.with? "zimg"
     args << "--enable-libzmq" if build.with? "zeromq"
-
-    if build.with? "rtmp"
-      args << "--enable-librtmp"
-      args << "--enable-openssl"
-      args << "--enable-gcrypt"
-      args << "--enable-gmp"
-    end
 
     if build.with? "openjpeg"
       args << "--enable-libopenjpeg"
