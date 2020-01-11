@@ -19,12 +19,12 @@ class Ffmpeg < Formula
 
   bottle do
     root_url "https://dl.bintray.com/sanghan/bottles-packages"
-    rebuild 2
     sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
+    rebuild 2
   end
 
-  unless OS.mac?
-    option "with-librsvg", "Enable SVG files as inputs via librsvg"
+  resource "nvcodec" do
+    url "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git", :tag => "n9.1.23.1"
   end
 
   option "with-chromaprint", "Enable the Chromaprint audio fingerprinting library"
@@ -83,12 +83,6 @@ class Ffmpeg < Formula
   depends_on "x265"
   depends_on "xz"
 
-  unless OS.mac?
-    depends_on "zlib"
-    depends_on "bzip2"
-    depends_on "linuxbrew/xorg/libxv"
-  end
-
   depends_on "gnutls" => :recommended
 
   depends_on "amiaopensource/amiaos/decklinksdk" => :optional
@@ -129,13 +123,26 @@ class Ffmpeg < Formula
     depends_on "tesseract-lang" => :recommended
   end
 
+  if OS.mac?
+    option "with-librsvg", "Enable SVG files as inputs via librsvg"
+  end
+
+  if OS.linux?
+    depends_on "zlib"
+    depends_on "bzip2"
+    depends_on "linuxbrew/xorg/libxv"
+
+    option "with-nvenc", "Enable NVIDIA's Hardware Acceleration" => [:build, "llvm"]
+  end
+
   def install
+
     # Work around Xcode 11 clang bug
     # https://bitbucket.org/multicoreware/x265/issues/514/wrong-code-generated-on-macos-1015
     ENV.append_to_cflags "-fno-stack-check" if DevelopmentTools.clang_build_version >= 1010
 
-    ENV.append("extra_libs", "-lpthread")
-    ENV.append("extra_libs", "-lm")
+    ENV.append "extra_libs", "-lpthread"
+    ENV.append "extra_libs", "-lm"
 
     args = %W[
       --prefix=#{prefix}
@@ -170,6 +177,25 @@ class Ffmpeg < Formula
       --disable-libjack
       --disable-doc
     ]
+
+    if build.with? "nvenc"
+
+      fails_with :gcc do
+        build 800
+        cause "Use clang"
+      end
+
+      ENV["PKG_CONFIG_PATH"] += ":#{HOMEBREW_PREFIX}/lib/pkgconfig"
+
+      ENV.append "LDFLAGS", "-L#{HOMEBREW_PREFIX}/opt/llvm/lib"
+      ENV.append "LDFLAGS", "-Wl,-rpath,#{HOMEBREW_PREFIX}/opt/llvm/lib"
+
+      args << "--enable-ffnvcodec"
+      args << "--enable-cuda-llvm"
+      args << "--enable-nvenc"
+
+      resource("nvcodec").stage { system "make", "PREFIX=#{HOMEBREW_PREFIX}", "install" }
+    end
 
     if OS.mac?
       args << "--enable-opencl"
