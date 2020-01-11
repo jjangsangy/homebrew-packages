@@ -23,6 +23,10 @@ class Ffmpeg < Formula
     sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
   end
 
+  unless OS.mac?
+    option "with-librsvg", "Enable SVG files as inputs via librsvg"
+  end
+
   option "with-chromaprint", "Enable the Chromaprint audio fingerprinting library"
   option "with-dav1d", "Enable AV1 decoding via libdav1d"
   option "with-decklinksdk", "Enable DeckLink support"
@@ -36,7 +40,6 @@ class Ffmpeg < Formula
   option "with-libgcrypt", "Enable gcrypt, needed for rtmp(t)e support if openssl, librtmp or gmp is not used"
   option "with-libgsm", "Enable GSM de/encoding via libgsm"
   option "with-libmodplug", "Enable ModPlug via libmodplug"
-  option "with-librsvg", "Enable SVG files as inputs via librsvg"
   option "with-libsoxr", "Enable the soxr resample library"
   option "with-libssh", "Enable SFTP protocol via libssh"
   option "with-libvidstab", "Enable vid.stab support for video stabilization"
