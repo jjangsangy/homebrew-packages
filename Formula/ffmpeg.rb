@@ -179,21 +179,21 @@ class Ffmpeg < Formula
     ]
 
     if build.with? "nvenc"
-
-      fails_with :gcc do
-        build 800
-        cause "Use clang"
-      end
-
       ENV["PKG_CONFIG_PATH"] += ":#{HOMEBREW_PREFIX}/lib/pkgconfig"
+      ENV["CUDA_HOME"] = "/usr/local/cuda"
+      ENV["PATH"] += "#{ENV['CUDA_HOME']}/bin"
 
       ENV.append "LDFLAGS", "-L#{HOMEBREW_PREFIX}/opt/llvm/lib"
       ENV.append "LDFLAGS", "-Wl,-rpath,#{HOMEBREW_PREFIX}/opt/llvm/lib"
 
+      args << "--enable-nvenc"
       args << "--enable-ffnvcodec"
       args << "--enable-cuda-llvm"
-      args << "--enable-nvenc"
+      args << "--enable-cuvid"
+      args << "--extra-cflags=-I#{ENV['CUDA_HOME']}/include"
+      args << "--extra-ldflags=-L#{ENV['CUDA_HOME']}/lib64"
 
+      ohai "Installing Nvidia Headers"
       resource("nvcodec").stage { system "make", "PREFIX=#{HOMEBREW_PREFIX}", "install" }
     end
 
