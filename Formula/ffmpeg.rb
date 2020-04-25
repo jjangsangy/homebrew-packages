@@ -132,7 +132,7 @@ class Ffmpeg < Formula
     depends_on "bzip2"
     depends_on "linuxbrew/xorg/libxv"
 
-    option "with-nvenc", "Enable NVIDIA's Hardware Acceleration" => [:build, "llvm"]
+    option "with-nvenc", "Enable NVIDIA's Hardware Acceleration"
   end
 
   def install

@@ -4,32 +4,35 @@ class Mpv < Formula
   head "https://github.com/mpv-player/mpv.git"
 
   stable do
-    url "https://github.com/mpv-player/mpv/archive/v0.31.0.tar.gz"
-    sha256 "805a3ac8cf51bfdea6087a6480c18835101da0355c8e469b6d488a1e290585a5"
-    version "0.13.0"
+    url "https://github.com/mpv-player/mpv/archive/v0.32.0.tar.gz"
+    sha256 "9163f64832226d22e24bbc4874ebd6ac02372cd717bef15c28a0aa858c5fe592"
+    version "0.32.0"
   end
 
-  option "with-sdl2", "SDL2"
+  option "with-app", "Build standalone mpv app"
+  option "with-dav1d", "Build with support for av1 decoding"
+
+  depends_on "dav1d" => :optional
 
   depends_on "docutils" => :build
   depends_on "pkg-config" => :build
   depends_on "python" => :build
+  depends_on :xcode => :build
+  depends_on :macos => :yosemite
 
   depends_on "jjangsangy/packages/ffmpeg"
-  depends_on "dav1d"
   depends_on "jpeg"
   depends_on "libarchive"
   depends_on "libass"
   depends_on "little-cms2"
   depends_on "lua@5.1"
+  depends_on "sdl2"
 
   depends_on "mujs"
   depends_on "uchardet"
   depends_on "vapoursynth"
   depends_on "youtube-dl"
 
-  depends_on "dav1d" => :optional
-  depends_on "sdl2" => :optional
 
   def install
     # LANG is unset by default on macOS and causes issues when calling getlocale
@@ -41,29 +44,35 @@ class Mpv < Formula
       --prefix=#{prefix}
       --enable-html-build
       --enable-javascript
-      --enable-libmpv-shared
-      --enable-lgpl
-      --enable-lua
-      --enable-libarchive
-      --enable-uchardet
       --enable-jpeg
+      --enable-lgpl
+      --enable-libarchive
+      --enable-libmpv-shared
+      --enable-lua
+      --enable-uchardet
+      --enable-sdl2
       --confdir=#{etc}/mpv
       --datadir=#{pkgshare}
       --mandir=#{man}
       --docdir=#{doc}
       --zshdir=#{zsh_completion}
+      --lua=51deb
     ]
 
-    args << "--enable-clang-database" if ENV.cc == "clang"
-    args << "--enable-sdl2" if build.with? "sdl2"
+    args << "--enable-clang-database" if ENV.cc == :clang
 
     system "python3", "bootstrap.py"
     system "python3", "waf", "configure", *args
     system "python3", "waf", "install"
+
+    if build.with? "app"
+      system "python3", "./TOOLS/osxbundle.py", "build/mpv"
+      cp bin/"mpv", "build/mpv.app/Contents/MacOS/mpv"
+      prefix.install "build/mpv.app"
+    end
   end
 
   test do
     system bin/"mpv", "--ao=null", test_fixtures("test.wav")
   end
 end
-
