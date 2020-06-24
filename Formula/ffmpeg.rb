@@ -10,13 +10,6 @@ class Ffmpeg < Formula
     version "4.2.2"
   end
 
-  devel do
-    url "https://github.com/FFmpeg/FFmpeg/archive/n4.3-dev.tar.gz"
-    sha256 "253dd6a1922ed28533e402818f0eea5ed6b4fef22e9b7056c47fe0ad09fee3b4"
-    version "4.3.0"
-
-  end
-
   bottle do
     root_url "https://dl.bintray.com/sanghan/bottles-packages"
     sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
