@@ -35,6 +35,7 @@ class Ffmpeg < Formula
   option "with-opencore-amr", "Enable Opencore AMR format"
   option "with-openh264", "Enable H.264 encoding via OpenH264"
   option "with-openjpeg", "Enable JPEG 2000 de/encoding via OpenJPEG"
+  option "with-rav1e", "Enable AV1 encoding via rav1e"
   option "with-rubberband", "Enable rubberband needed for rubberband filter"
   option "with-speex", "Enable Speex de/encoding via libspeex"
   option "with-srt", "Enable Haivision SRT protocol via libsrt"
@@ -90,6 +91,7 @@ class Ffmpeg < Formula
   depends_on "libsoxr" => :optional
   depends_on "libssh" => :optional
   depends_on "libvidstab" => :optional
+  depends_on "rav1e" => :optional
   depends_on "libvmaf" => :optional
   depends_on "libxml2" => :optional
   depends_on "opencore-amr" => :optional
@@ -204,6 +206,7 @@ class Ffmpeg < Formula
     args << "--enable-libkvazaar" if build.with? "kvazaar"
     args << "--enable-libmodplug" if build.with? "libmodplug"
     args << "--enable-libopenh264" if build.with? "openh264"
+    args << "--enable-librav1e" if build.with? "rav1e"
     args << "--enable-librsvg" if build.with? "librsvg"
     args << "--enable-librubberband" if build.with? "rubberband"
     args << "--enable-libsoxr" if build.with? "libsoxr"
