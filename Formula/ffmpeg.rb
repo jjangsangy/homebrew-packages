@@ -5,15 +5,9 @@ class Ffmpeg < Formula
   mirror "https://github.com/FFmpeg/FFmpeg.git"
 
   stable do
-    url "https://ffmpeg.org/releases/ffmpeg-4.2.2.tar.xz"
-    sha256 "cb754255ab0ee2ea5f66f8850e1bd6ad5cac1cd855d0a2f4990fb8c668b0d29c"
-    version "4.2.2"
-  end
-
-  bottle do
-    root_url "https://dl.bintray.com/sanghan/bottles-packages"
-    sha256 "708f576e3a3eab10a90588ad8d6eae14e7905f772889513d0f9d96c6b66c06d2" => :mojave
-    rebuild 2
+    url "https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.xz"
+    sha256 "ad009240d46e307b4e03a213a0f49c11b650e445b1f8be0dda2a9212b34d2ffb"
+    version "4.3.1"
   end
 
   resource "nvcodec" do
